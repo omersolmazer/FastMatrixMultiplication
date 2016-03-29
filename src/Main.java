@@ -67,7 +67,7 @@ public class Main {
 			for(int j = 0; j < size; j++){
 				BigDecimal current = new BigDecimal(0);
 				for(int k = 0; k < size; k++)
-					current.add(m1[i][k].multiply(m2[k][j]));
+					current = current.add(m1[i][k].multiply(m2[k][j]));
 
 				next[i][j] = current;
 			}
