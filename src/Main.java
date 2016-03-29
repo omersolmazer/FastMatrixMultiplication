@@ -3,14 +3,14 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.Vector;
-
 
 public class Main {
 
 	public static void main(String[] args) {
 		// Read matrix from input file
-		long[][] initial = readMatrix(args[0]);
+		BigDecimal[][] initial = readMatrix(args[0]);
 
 		int targetPower = Integer.parseInt(args[2]);
 		int size = initial.length;
@@ -18,7 +18,7 @@ public class Main {
 		// Calculate nearest (ceiling) power of 2 based on target
 		int upperBound = (int)Math.pow(2, Math.ceil(Math.log(targetPower)/Math.log(2)));
 
-		long[][][] matrixMap = new long[upperBound][size][size];
+		BigDecimal[][][] matrixMap = new BigDecimal[upperBound][size][size];
 		matrixMap[1] = initial;
 
 		fillTable(upperBound, matrixMap[1], matrixMap);
@@ -27,11 +27,11 @@ public class Main {
 		output(args[1], matrixMap[targetPower]);
 	}
 
-	public static void binarySearch(int begin, int end, int target, long[][][] matrixMap){
+	public static void binarySearch(int begin, int end, int target, BigDecimal[][][] matrixMap){
 		int middle = (begin + end)/2;
 
 		// Calculate middle matrix
-		long[][] halfwayMatrix = multiplyMatrices(matrixMap[begin], matrixMap[(end-begin)/2]);
+		BigDecimal[][] halfwayMatrix = multiplyMatrices(matrixMap[begin], matrixMap[(end-begin)/2]);
 		matrixMap[middle] = halfwayMatrix;
 		
 		if(middle == target) // Target found, return
@@ -46,10 +46,10 @@ public class Main {
 		return;
 	}
 
-	public static void fillTable(int targetPower, long[][] matrix, long[][][] matrixMap){
+	public static void fillTable(int targetPower, BigDecimal[][] matrix, BigDecimal[][][] matrixMap){
 		// Fill powers of 2 in table. Pre-computation phase.
 		for(int power = 2; power < targetPower; power*=2){
-			long[][] next = multiplyMatrices(matrix, matrix);
+			BigDecimal[][] next = multiplyMatrices(matrix, matrix);
 			matrixMap[power] = next;
 			matrix = next;
 		}
@@ -58,16 +58,16 @@ public class Main {
 
 	// Standard matrix multiplication, can be improved by Strassen's algorithm
 
-	public static long[][] multiplyMatrices(long[][] m1, long[][] m2){
+	public static BigDecimal[][] multiplyMatrices(BigDecimal[][] m1, BigDecimal[][] m2){
 		
 		int size = m1.length;
 		
-		long[][] next = new long[size][size];
+		BigDecimal[][] next = new BigDecimal[size][size];
 		for(int i = 0; i < size; i++){
 			for(int j = 0; j < size; j++){
-				long current = 0;
+				BigDecimal current = new BigDecimal(0);
 				for(int k = 0; k < size; k++)
-					current += m1[i][k] * m2[k][j];
+					current.add(m1[i][k].multiply(m2[k][j]));
 
 				next[i][j] = current;
 			}
@@ -77,7 +77,7 @@ public class Main {
 
 
 	// For debug purposes only. Prints entire matrix onto standard output.
-	public static void printMatrix(long[][] m){
+	public static void printMatrix(BigDecimal[][] m){
 		for(int i = 0; i < m.length; i++){
 			for(int j = 0; j < m[0].length; j++)
 				System.out.print(m[i][j]+"\t");
@@ -89,20 +89,20 @@ public class Main {
 
 
 	// Read and verify the input file. Throws exception if not a square matrix.
-	public static long[][] readMatrix(String filePath){
+	public static BigDecimal[][] readMatrix(String filePath){
 		try {
 
 			FileReader fileReader = new FileReader(filePath);
 			BufferedReader bufferedReader = new BufferedReader(fileReader);
 			String line = "";
-			Vector<Vector<Long>> initialVector = new Vector<>();
+			Vector<Vector<BigDecimal>> initialVector = new Vector<>();
 			int finalDimension = 0;
 			boolean dimensionSet = false;
 			while((line = bufferedReader.readLine()) != null){
-				Vector<Long> thisRow = new Vector<>();
+				Vector<BigDecimal> thisRow = new Vector<>();
 				int thisDimension = 0;
 				for(String s: line.split(" ")){
-					thisRow.add(Long.parseLong(s));
+					thisRow.add(new BigDecimal(s));
 					thisDimension++;
 					if(!dimensionSet)
 						finalDimension++;
@@ -117,10 +117,10 @@ public class Main {
 				initialVector.add(thisRow);
 			}
 			int size = initialVector.size(), row = 0, column = 0;
-			long[][] initialMatrix = new long[size][size];
+			BigDecimal[][] initialMatrix = new BigDecimal[size][size];
 
-			for(Vector<Long> v: initialVector){
-				for(long l: v)
+			for(Vector<BigDecimal> v: initialVector){
+				for(BigDecimal l: v)
 					initialMatrix[row][column++] = l;
 
 				row++;
@@ -153,7 +153,7 @@ public class Main {
 
 
 	// Output the matrix into a file.
-	public static void output(String filePath, long[][] m){
+	public static void output(String filePath, BigDecimal[][] m){
 		FileWriter fileWriter;
 		try {
 			fileWriter = new FileWriter(filePath);
