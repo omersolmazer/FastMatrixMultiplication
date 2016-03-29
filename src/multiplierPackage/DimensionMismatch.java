@@ -1,5 +1,3 @@
-package multiplierPackage;
-
 public class DimensionMismatch extends Exception {
 
 	private static final long serialVersionUID = 1L;
