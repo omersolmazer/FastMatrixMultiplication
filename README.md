@@ -20,9 +20,11 @@ java Main input.txt output.txt X
 
 Input file has the following format:
 
-Every line is a row
+Every line is a row,
 
-Elements in every row are separated by space character.
+Numbers in every row are separated by the space character,
+
+Numbers can be anything supported by BigDecimal class of Java Math library ( https://docs.oracle.com/javase/7/docs/api/java/math/BigDecimal.html )
 
 #### 3. Output:
 
